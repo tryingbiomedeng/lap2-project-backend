@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "item": "cursed tool 1",
+        "price": "£100",
+        "contact": "satoruGojo@gmail.com"
+    },
+    {
+        "id": 2,
+        "item": "cursed tool 2",
+        "price": "£50",
+        "contact": "satoruGojo@gmail.com"
+    }
+]
