@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const logger = require('morgan')
 const accounts = require('./accounts')
+const profiles = require('./profiles')
 
 const app = express()
 
@@ -15,6 +16,9 @@ app.get('/', (req, res) => {
       description: "Come and save the environment with us"
     })
 })
+
+
+// ACCOUNTS
 
 app.get('/account', (req, res) => {
     res.json(accounts)
@@ -35,6 +39,52 @@ app.get('/account/:id', (req, res) => {
       return res.status(404).json({message: 'Account not found'})
     }
     res.json(account)
+})
+
+
+//PROFILES
+
+app.get('/profile', (req, res) => {
+    res.json(profiles) 
+})
+
+app.get('/profile/:id', (req, res) => {
+    const id = req.params.id
+    const profile = profiles.find(p => p.id === parseInt(id))
+    if (!profile) {
+      return res.status(404).json({message: 'Profile not found'})
+    }
+    res.json(profile)
+})
+  
+app.post('/profile', (req, res) => {
+    const newProfile = req.body
+    const id = profiles.length + 1
+    profiles.push({...newProfile, id: parseInt(id)})
+    res.status(201).json(newProfile) 
+})
+  
+app.patch('/profile/:id', (req, res) => {
+    const id = req.params.id
+    const updates = req.body
+    const profile = profiles.find(p => p.id === parseInt(id))
+  
+    if (!profile) {
+      return res.status(404).json({message: 'Profile not found'})
+    }
+    Object.assign(profile, updates)
+    res.json(profile)
+})
+  
+app.delete('/profile/:id', (req, res) => {
+    const id = req.params.id
+    const index = profiles.findIndex(p => p.id === parseInt(id))
+  
+    if (index === -1) {
+      return res.status(404).json({message: 'Profile not found'})
+    }
+    profiles.splice(index, 1)
+    res.sendStatus(204)
 })
 
 module.exports = app
