@@ -131,7 +131,6 @@ app.delete('/customer/:id', async (req, res) => {
   }
 })
 
-
 //FIXERS
 
 // Get all fixers
@@ -207,7 +206,6 @@ app.patch('/fixer/:id', async (req, res) => {
   
 // Delete fixer profile
 app.delete('/fixer/:id', async (req, res) => {
-
   try {
     const fixerId = req.params.id;
     const query = `DELETE FROM fixers WHERE fixer_id = $1`;
@@ -225,36 +223,95 @@ app.delete('/fixer/:id', async (req, res) => {
 
 //ITEMS
 
-app.get('/item', (req, res) => {
-    res.json(items) 
+// Get all items
+app.get('/item', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM items')
+    res.json(rows)
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error retrieving items'}) 
+  }
 })
 
-app.post('/item', (req, res) => {
-    const newItem = req.body
-    const id = items.length + 1
-    items.push({...newItem, id: parseInt(id)})
-    res.status(201).json(newItem) 
-})
-
-app.get('/item/:id', (req, res) => {
-    const id = parseInt(req.params.id)
-    console.log(id)
-    const item = items.find(a => a.id === id)
-    if (!item) {
-      return res.status(404).json({message: 'Item not found'})
+// Create new item
+app.post('/item', async (req, res) => {
+  const { user_name, item_name, item_description, price } = req.body
+  try {
+    const customerResult = await db.query('SELECT * FROM customers JOIN accounts ON customers.account_id = accounts.account_id WHERE accounts.user_name = $1', [user_name])
+    const customer = customerResult.rows[0]
+    if(!customer) {
+      return res.status(404).json({message: 'Customer not found'})
     }
-    res.json(item)
+    const query = `
+      INSERT INTO items (seller_id, item_name, item_description, price)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `
+    const values = [customer.customer_id, item_name, item_description, price]
+    const { rows } = await db.query(query, values)
+    const item = rows[0]
+    await db.query('UPDATE customers SET items_for_sale = items_for_sale + 1 WHERE customer_id = $1', [customer.customer_id])
+    res.status(201).json(item)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error creating item'})
+  }
 })
 
-app.delete('/item/:id', (req, res) => {
-    const id = req.params.id
-    const index = items.findIndex(p => p.id === parseInt(id))
-  
-    if (index === -1) {
-      return res.status(404).json({message: 'Item not found'})
+// Get single item
+app.get('/item/:id', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM items WHERE item_id = $1', [req.params.id]) 
+    if (!rows[0]) {
+      return res.status(404).json({ message: 'Item not found' })
     }
-    items.splice(index, 1)
-    res.sendStatus(204)
+    res.json(rows[0])
+  } catch (error) {
+     console.error(error)
+     res.status(500).json({ message: 'Error retrieving item' }) 
+  }
+})
+
+// Edit items
+app.patch('/item/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id
+    const updates = req.body
+    const query = `
+      UPDATE items 
+      SET item_name = $1, item_description = $2, price = $3
+      WHERE item_id = $4
+      RETURNING *
+    `
+    const values = [updates.item_name, updates.item_description, updates.price, itemId]
+    const { rows } = await db.query(query, values)
+    if(!rows[0]) {
+      return res.status(404).json({message: 'Fixer not found'})
+    }
+    res.json(rows[0])
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error updating fixer profile'})
+  }
+})
+
+// Delete item
+app.delete('/item/:id', async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const query = `DELETE FROM items WHERE item_id = $1`;
+    await db.query(query, [itemId]);
+    const result = await db.query('SELECT * FROM items WHERE item_id = $1', [itemId]);
+    if(!result.rowCount) {
+      return res.status(404).json({message: 'Item not found'});
+    }
+    res.sendStatus(204);
+  } catch (error) {
+     console.error(error);
+     res.status(500).json({message: 'Error deleting item'}); 
+  }
 })
 
 // JOB ADVERTS
