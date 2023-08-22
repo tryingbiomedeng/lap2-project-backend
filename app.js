@@ -316,36 +316,93 @@ app.delete('/item/:id', async (req, res) => {
 
 // JOB ADVERTS
 
-app.get('/job', (req, res) => {
-    res.json(jobs) 
+// Get all items
+app.get('/job', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM jobs')
+    res.json(rows)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error retrieving jobs'}) 
+  }
 })
 
-app.post('/job', (req, res) => {
-    const newJob = req.body
-    const id = jobs.length + 1
-    jobs.push({...newJob, id: parseInt(id)})
-    res.status(201).json(newJob) 
+// Create new job
+app.post('/job', async (req, res) => {
+  const { user_name, job_name, job_description } = req.body
+  try {
+    const customerResult = await db.query('SELECT * FROM customers JOIN accounts ON customers.account_id = accounts.account_id WHERE accounts.user_name = $1', [user_name])
+    const customer = customerResult.rows[0]
+    if(!customer) {
+      return res.status(404).json({message: 'Customer not found'})
+    }
+    const query = `
+      INSERT INTO jobs (customer_id, job_name, job_description)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `
+    const values = [customer.customer_id, job_name, job_description]
+    const { rows } = await db.query(query, values)
+    const job = rows[0]
+    await db.query('UPDATE customers SET active_requests = active_requests + 1 WHERE customer_id = $1', [customer.customer_id])
+    res.status(201).json(job)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error creating job'}) 
+  }
 })
 
-app.get('/job/:id', (req, res) => {
-    const id = parseInt(req.params.id)
-    console.log(id)
-    const job = jobs.find(a => a.id === id)
-    if (!job) {
+// Edit job advert
+app.patch('/job/:id', async (req, res) => {
+  try {
+    const jobId = req.params.id
+    const updates = req.body
+    const query = `
+      UPDATE jobs 
+      SET job_name = $1, job_description = $2, available = $3, completed = $4
+      WHERE job_id = $5
+      RETURNING *
+    `
+    const values = [updates.job_name, updates.job_description, updates.available, updates.completed, jobId]
+    const { rows } = await db.query(query, values)
+    if(!rows[0]) {
       return res.status(404).json({message: 'Job not found'})
     }
-    res.json(job)
+    res.json(rows[0])
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error updating job advert'})
+  }
 })
 
-app.delete('/job/:id', (req, res) => {
-    const id = req.params.id
-    const index = jobs.findIndex(p => p.id === parseInt(id))
-  
-    if (index === -1) {
+// Get single job request
+app.get('/job/:id', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM jobs WHERE job_id = $1', [req.params.id]) 
+    if (!rows[0]) {
+      return res.status(404).json({ message: 'Job not found' })
+    }
+    res.json(rows[0])
+  } catch (error) {
+     console.error(error)
+     res.status(500).json({ message: 'Error retrieving job' }) 
+  }
+})
+
+// Delete job
+app.delete('/job/:id', async (req, res) => {
+  try {
+    const job = await db.query('SELECT * FROM jobs WHERE job_id = $1', [req.params.id])
+    if(!job.rows[0]) {
       return res.status(404).json({message: 'Job not found'})
     }
-    jobs.splice(index, 1)
+    await db.query('UPDATE customers SET active_requests = active_requests - 1 WHERE customer_id = $1', [job.rows[0].customer_id])
+    await db.query('DELETE FROM jobs WHERE job_id = $1', [req.params.id])
     res.sendStatus(204)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error deleting job'})
+  }
 })
 
 module.exports = app
