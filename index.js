@@ -1,7 +1,8 @@
-require('dotenv').config()
+require('dotenv').config({path: '../database/.env'})
+// const db = require('../database/connect')
 
 const app = require('./app')
-const port = 3000
+const port = process.env.PORT
 
 app.listen(port, () => {
   console.log(`API running on port ${port}`)
