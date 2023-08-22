@@ -224,16 +224,7 @@ app.delete('/fixer/:id', async (req, res) => {
 //ITEMS
 
 // Get all items
-app.get('/item', async (req, res) => {
-  try {
-    const { rows } = await db.query('SELECT * FROM items')
-    res.json(rows)
-
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({message: 'Error retrieving items'}) 
-  }
-})
+app.use('/items', require('./routers/items'));
 
 // Create new item
 app.post('/item', async (req, res) => {
