@@ -60,6 +60,77 @@ app.get('/account/:id', async (req, res) => {
   }
 })
 
+// CUSTOMERS
+
+// Get all customers
+app.get('/customer', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM customers')
+    res.json(rows) 
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error retrieving customers'})
+  }
+})
+
+// Get single customer
+app.get('/customer/:id', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM customers WHERE customer_id = $1', [req.params.id])
+
+    if(!rows[0]) {
+      return res.status(404).json({message: 'Customer not found'})
+    }
+
+    res.json(rows[0])
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error retrieving customer'})
+  }
+})
+
+// Create new customer
+app.post('/customer', async (req, res) => {
+  const { user_name } = req.body
+  try {
+    const accountResult = await db.query('SELECT * FROM accounts WHERE user_name = $1', [user_name]) 
+    const account = accountResult.rows[0]
+    if(!account) {
+      return res.status(404).json({message: 'User not found'})
+    }
+    const query = `
+      INSERT INTO customers (account_id)
+      VALUES ($1)
+      RETURNING *  
+    `
+    const values = [account.account_id]
+    const { rows } = await db.query(query, values)
+    res.status(201).json(rows[0])
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({message: 'Error creating customer'})
+  }
+})
+
+// Delete customer profile
+app.delete('/customer/:id', async (req, res) => {
+
+  try {
+    const customerId = req.params.id;
+    const query = `DELETE FROM customers WHERE customer_id = $1`;
+    await db.query(query, [customerId]);
+    const result = await db.query('SELECT * FROM customers WHERE customer_id = $1', [customerId]);
+    if(!result.rowCount) {
+      return res.status(404).json({message: 'Customer not found'});
+    }
+    res.sendStatus(204);
+  } catch (error) {
+     console.error(error);
+     res.status(500).json({message: 'Error deleting customer profile'}); 
+  }
+})
+
 
 //FIXERS
 
@@ -110,7 +181,6 @@ app.post('/fixer', async (req, res) => {
     res.status(500).json({ message: 'Error creating fixer' });
   }
 });
-
 
 // Edit fixer profile
 app.patch('/fixer/:id', async (req, res) => {
