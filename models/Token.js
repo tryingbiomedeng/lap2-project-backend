@@ -16,8 +16,17 @@ class Token {
       [account_id, token]);
 
     const newTokenId = response.rows[0].token_id;
-    const newToken = await Token.getOneById(newTokenId);
+    const newToken = await Token.showById(newTokenId);
     return newToken;
+  }
+
+  static async showById(id) {
+    const response = await db.query("SELECT * FROM token WHERE token_id = $1", [id]);
+    if (response.rows.length != 1) {
+      throw new Error("Unable to locate token.");
+    } else {
+      return new Token(response.rows[0])
+    }
   }
 }
 
