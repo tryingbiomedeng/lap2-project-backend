@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const logger = require('morgan')
-const cafeRoutes = require('./routers/cafeAccount')
+const cafeRoutes = require('./routers/cafeRouter')
 
 const app = express()
 
@@ -16,70 +16,9 @@ app.get('/', (req, res) => {
     })
 })
 
-app.use('/account', cafeRoutes)
-// // ACCOUNTS
-
-// // Create new account 
-// app.post('/account', async (req, res) => {
-//   try {
-//     const { email, user_name, user_password } = req.body
-//     const query = `
-//       INSERT INTO accounts (email, user_name, user_password) 
-//       VALUES ($1, $2, $3)
-//       RETURNING *
-//     `
-//     const values = [email, user_name, user_password]
-//     const { rows } = await db.query(query, values)
-//     res.status(201).json(rows[0])
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json({ message: 'Error creating account' })
-//   }
-// })
-
-// // Get single account
-// app.get('/account/:id', async (req, res) => {
-//   try {
-//     const { rows } = await db.query('SELECT * FROM accounts WHERE account_id = $1', [req.params.id]) 
-//     if (!rows[0]) {
-//       return res.status(404).json({ message: 'Account not found' })
-//     }
-//     res.json(rows[0])
-//   } catch (error) {
-//      console.error(error)
-//      res.status(500).json({ message: 'Error retrieving account' }) 
-//   }
-// })
+app.use('/cafe', cafeRoutes)
 
 // // CUSTOMERS
-
-// // Get all customers
-// app.get('/customer', async (req, res) => {
-//   try {
-//     const { rows } = await db.query('SELECT * FROM customers')
-//     res.json(rows) 
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json({message: 'Error retrieving customers'})
-//   }
-// })
-
-// // Get single customer
-// app.get('/customer/:id', async (req, res) => {
-//   try {
-//     const { rows } = await db.query('SELECT * FROM customers WHERE customer_id = $1', [req.params.id])
-
-//     if(!rows[0]) {
-//       return res.status(404).json({message: 'Customer not found'})
-//     }
-
-//     res.json(rows[0])
-
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json({message: 'Error retrieving customer'})
-//   }
-// })
 
 // // Create new customer
 // app.post('/customer', async (req, res) => {
@@ -104,49 +43,7 @@ app.use('/account', cafeRoutes)
 //   }
 // })
 
-// // Delete customer profile
-// app.delete('/customer/:id', async (req, res) => {
-
-//   try {
-//     const customerId = req.params.id;
-//     const query = `DELETE FROM customers WHERE customer_id = $1`;
-//     await db.query(query, [customerId]);
-//     const result = await db.query('SELECT * FROM customers WHERE customer_id = $1', [customerId]);
-//     if(!result.rowCount) {
-//       return res.status(404).json({message: 'Customer not found'});
-//     }
-//     res.sendStatus(204);
-//   } catch (error) {
-//      console.error(error);
-//      res.status(500).json({message: 'Error deleting customer profile'}); 
-//   }
-// })
-
 // //FIXERS
-
-// // Get all fixers
-// app.get('/fixer', async (req, res) => {
-//   try {
-//     const { rows } = await db.query('SELECT * FROM fixers')
-//     res.json(rows)  
-//   } catch (err) {
-//     console.error(err.message)
-//   }
-// })
-
-// // Get single fixer profile
-// app.get('/fixer/:id', async (req, res) => {
-//   try {
-//     const { rows } = await db.query('SELECT * FROM fixers WHERE fixer_id = $1', [req.params.id]) 
-//     if (!rows[0]) {
-//       return res.status(404).json({ message: 'Account not found' })
-//     }
-//     res.json(rows[0])
-//   } catch (error) {
-//      console.error(error)
-//      res.status(500).json({ message: 'Error retrieving account' }) 
-//   }
-// })
 
 // // Create fixer profile
 // app.post('/fixer', async (req, res) => {
