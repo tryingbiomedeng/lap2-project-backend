@@ -25,7 +25,17 @@ class Token {
     if (response.rows.length != 1) {
       throw new Error("Unable to locate token.");
     } else {
-      return new Token(response.rows[0])
+      return new Token(response.rows[0]);
+    }
+  }
+
+  static async showByToken(token) {
+    const response = await db.query("SELECT * FROM token WHERE token = $1", [token]);
+
+    if (response.rows.length != 1) {
+      throw new Error("Unable to locate token.");
+    } else {
+      return new Token(response.rows[0]);
     }
   }
 }
