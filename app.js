@@ -1,8 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const logger = require('morgan')
-// const db = require('../database/connect')
-const cafeRoutes = require('./routers/cafe')
+const cafeRoutes = require('./routers/cafeAccount')
 
 const app = express()
 
@@ -19,16 +18,6 @@ app.get('/', (req, res) => {
 
 app.use('/account', cafeRoutes)
 // // ACCOUNTS
-
-// // // Get all accounts
-// // app.get('/account', async (req, res) => {
-// //   try {
-// //     const { rows } = await db.query('SELECT * FROM accounts')
-// //     res.json(rows)  
-// //   } catch (err) {
-// //     console.error(err.message)
-// //   }
-// // })
 
 // // Create new account 
 // app.post('/account', async (req, res) => {
