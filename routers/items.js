@@ -5,6 +5,7 @@ const itemsController = require('../controllers/items');
 const router = Router();
 
 router.get('/', itemsController.index);
+router.get('/:id', itemsController.showById);
 router.post('/', itemsController.create);
 
 module.exports = router;

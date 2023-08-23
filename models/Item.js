@@ -31,10 +31,18 @@ class Item {
     }
   }
 
+  static async showById(id) {
+    const response = await db.query('SELECT * FROM items WHERE item_id = $1', [id]);
+    if (response.rows.length != 1) {
+      throw new Error('Item not found.');
+    }
+    return new Item(response.rows[0])
+  }
+
   static async create(data) {
     try {
       console.log(data.sellerId, data.itemName, data.itemDescription, data.price);
-      const response = await db.query("        INSERT INTO items (seller_id, item_name, item_description, price) VALUES ($1, $2, $3, $4) RETURNING *",
+      const response = await db.query("INSERT INTO items (seller_id, item_name, item_description, price) VALUES ($1, $2, $3, $4) RETURNING *",
       [data.sellerId, data.itemName, data.itemDescription, data.price]);
       const item = new Item(response.rows[0]);
       console.log(item);

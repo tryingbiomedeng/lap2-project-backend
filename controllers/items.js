@@ -10,6 +10,16 @@ const index = async (req, res) => {
   }
 }
 
+const showById = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const item = await Item.showById(id);
+    res.status(200).json(item);
+  } catch (error) {
+    res.status(404).send({error: error.message})
+  }
+}
+
 const create = async (req, res) => {
   try {
     const data = req.body;
@@ -23,5 +33,6 @@ const create = async (req, res) => {
 
 module.exports = {
   index,
+  showById,
   create
 }

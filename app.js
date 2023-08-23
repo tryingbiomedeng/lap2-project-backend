@@ -223,7 +223,7 @@ app.delete('/fixer/:id', async (req, res) => {
 
 //ITEMS
 
-// Get all items
+// Item routes
 app.use('/items', require('./routers/items'));
 
 // Get single item
