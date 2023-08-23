@@ -1,4 +1,7 @@
+const bcrypt = require('bcrypt')
+
 const Account = require('../models/cafeAccount')
+const Token = require('../models/Token')
 
 // model/DB -> controller -> router -> app -> localhost:3000/countries
 
@@ -32,8 +35,46 @@ async function create(req, res) {
   }
 }
 
+async function register(req, res) {
+  try {
+    const data = req.body;
+
+    const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS))
+
+    // encrypt password
+    data.user_password = await bcrypt.hash(data.user_password, salt)
+
+    // save username & encrypted password
+    const result = await Account.create(data)
+    res.status(201).send(result)
+  } catch (error) {
+    res.status(400).json({error: error.message})
+  }
+}
+
+async function login(req, res) {
+  const data = req.body;
+
+  try {
+    const user = await Account.findByUserName(data.user_name)
+
+    const authenticated = await bcrypt.compare(data.user_password, user.user_password)
+
+    if (!authenticated) {
+      throw new Error("Incorrect credentials.")
+    } else {
+      const token = await Token.create(user.account_id)
+      res.status(200).json({authenticated: true, token: token.token})
+    }
+  } catch (error) {
+    res.status(401).json({error: error.message})
+  }
+}
+
 module.exports = {
   index,
   show,
-  create
+  create,
+  register,
+  login
 }

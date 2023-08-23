@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS accounts, customers, fixers, items, jobs;
+DROP TABLE IF EXISTS accounts, customers, fixers, items, jobs, tokens;
 
 CREATE TABLE accounts (
   account_id INT GENERATED ALWAYS AS IDENTITY,
   email VARCHAR(50) UNIQUE NOT NULL,
   user_name VARCHAR(50) NOT NULL, 
-  user_password VARCHAR(50) NOT NULL,
+  user_password VARCHAR(60) NOT NULL,
   PRIMARY KEY (account_id)
 );
 
@@ -57,6 +57,16 @@ CREATE TABLE jobs (
   CONSTRAINT fk_customer
     FOREIGN KEY (customer_id)
     REFERENCES customers(customer_id)
+);
+
+CREATE TABLE tokens (
+  token_id INT GENERATED ALWAYS AS IDENTITY,
+  account_id INT NOT NULL,
+  token CHAR(36) UNIQUE NOT NULL,
+  PRIMARY KEY (token_id),
+  CONSTRAINT fk_account1
+    FOREIGN KEY (account_id)
+    REFERENCES accounts(account_id)
 );
 
 INSERT INTO accounts
