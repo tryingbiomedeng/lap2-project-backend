@@ -45,7 +45,7 @@ async function register(req, res) {
     data.password = await bcrypt.hash(data.password, salt)
 
     // save username & encrypted password
-    const result = await UserActivation.create(data)
+    const result = await Account.create(data)
     res.status(201).send(result)
   } catch {
     res.status(400).json({error: error.message})
