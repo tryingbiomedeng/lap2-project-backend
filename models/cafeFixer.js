@@ -26,22 +26,22 @@ class Fixer {
         return new Fixer(response.rows[0])
     }
 
-    // static async create(account_id) {
-    //     try {
-    //     const query = `
-    //         INSERT INTO customers (account_id)
-    //         VALUES ($1)
-    //         RETURNING *
-    //     `;
+    static async create(data) {
+        console.log('Reached Fixer.create')
+        try {
+        const query = `
+            INSERT INTO fixers (account_id, bio, experience)
+            VALUES ($1, $2, $3)
+            RETURNING *`;
 
-    //     const values = [account_id];
-    //     const { rows } = await db.query(query, values);
-    //     return new Customer(rows[0].account_id);
-    //     } catch (error) {
-    //     throw new Error('Error creating customer');
-    //     }
-    // }
+        const values = [data.account_id, data.bio, data.experience]
 
+        const { rows } = await db.query(query, values);
+        return new Fixer(rows[0]);
+        } catch (error) {
+            throw new Error('Error creating fixer');
+        }
+    }
 
     static async update(fixerId, updates) {
         try {
@@ -52,17 +52,17 @@ class Fixer {
                 RETURNING *
             `;
 
-            const values = [updates.bio, updates.experience, fixerId]; // Use updates here
-            const { rows } = await db.query(query, values);
-
+            const values = [updates.bio, updates.experience, fixerId]
+            const { rows } = await db.query(query, values)
+e
             if (!rows[0]) {
-                throw new Error('Fixer not found');
+                throw new Error('Fixer not found')
             }
 
-            const { fixer_id, bio, experience } = rows[0];
-            return new Fixer({ fixer_id, bio, experience }); // Use an object to initialize Fixer
+            const { fixer_id, bio, experience } = rows[0]
+            return new Fixer({ fixer_id, bio, experience })
         } catch (error) {
-            throw new Error('Error updating fixer profile');
+            throw new Error('Error updating fixer profile')
         }
     }
   

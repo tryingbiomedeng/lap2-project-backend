@@ -1,5 +1,5 @@
 const Customer = require('../models/cafeCustomer')
-const db = require('../db/connect')
+const Account = require('../models/cafeAccount')
 
 // model/DB -> controller -> router -> app -> localhost:3000/countries
 
@@ -22,36 +22,15 @@ async function show(req, res) {
   }
 }
 
-// async function create(req, res) {
-//   try {
-//     const data = req.body
-//     const newAccount = await Account.create(data)
-//     res.status(201).json(newAccount)
-//   } catch (err) {
-//     res.status(400).json({ error: err.message })
-//   }
-// }
-
 async function create(req, res) {
     const { user_name } = req.body
-  
+    console.log(req.body)
     try {
-      // Check if the user_name is provided
-      if (!user_name) {
-        return res.status(400).json({ message: 'User_name is required.' });
-      }
-  
-      // Check if the user_name exists in the accounts table
-      const accountResult = await db.query('SELECT * FROM accounts WHERE user_name = $1', [user_name]);
-      console.log(accountResult)
-      const account = accountResult.rows[0];
-      console.log(account)
-  
+      const account = await Account.findByUserName(user_name);
       if (!account) {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      // Create a new customer using the Customer model
       const newCustomer = await Customer.create(account.account_id);
   
       res.status(201).json(newCustomer);
@@ -60,7 +39,6 @@ async function create(req, res) {
       res.status(500).json({ message: 'Error creating customer' });
     }
 }
-  
 
 async function destroy(req, res) {
     try {

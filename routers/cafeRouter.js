@@ -17,7 +17,7 @@ cafeRouter.delete('/customer/:id', customerController.destroy)
 
 cafeRouter.get('/fixer', fixerController.index)
 cafeRouter.get('/fixer/:id', fixerController.show)
-// cafeRouter.post('/fixer', fixerController.create)
+cafeRouter.post('/fixer', fixerController.create)
 cafeRouter.patch('/fixer/:id', fixerController.update)
 cafeRouter.delete('/fixer/:id', fixerController.destroy)
 

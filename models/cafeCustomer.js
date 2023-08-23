@@ -48,7 +48,7 @@ class Customer {
 
         const values = [account_id];
         const { rows } = await db.query(query, values);
-        return new Customer(rows[0].account_id);
+        return new Customer(rows[0]);
         } catch (error) {
         throw new Error('Error creating customer');
         }

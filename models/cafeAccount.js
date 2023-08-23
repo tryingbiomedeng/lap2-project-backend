@@ -25,19 +25,25 @@ class Account {
     }
 
     static async create(data) {
-      const { email, user_name, user_password } = data;   
-      if (!user_name, !email, !user_password){
-          throw new Error("Invalid user data.");
+      const { email, user_name, user_password } = data   
+      if (!email, !user_name, !user_password){
+          throw new Error("Invalid user data.")
       }
       
       const response = await db.query(`
              INSERT INTO accounts (email, user_name, user_password) 
              VALUES ($1, $2, $3)
-             RETURNING *
-           `, [email, user_name, user_password])
+             RETURNING *`, 
+             [email, user_name, user_password])
       return new Account(response.rows[0])
   }
-}
+  
+  static async findByUserName(userName) {
+    const query = 'SELECT * FROM accounts WHERE user_name = $1';
+    const { rows } = await db.query(query, [userName]);
+    return rows[0];
+  }
 
+}
 
 module.exports = Account

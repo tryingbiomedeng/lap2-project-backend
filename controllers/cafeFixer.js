@@ -1,5 +1,5 @@
 const Fixer = require('../models/cafeFixer')
-// const db = require('../db/connect')
+const Account = require('../models/cafeAccount')
 
 // model/DB -> controller -> router -> app -> localhost:3000/countries
 
@@ -22,42 +22,32 @@ async function show(req, res) {
   }
 }
 
-// async function create(req, res) {
-//   try {
-//     const data = req.body
-//     const newAccount = await Account.create(data)
-//     res.status(201).json(newAccount)
-//   } catch (err) {
-//     res.status(400).json({ error: err.message })
-//   }
-// }
+async function create(req, res) {
+  const { user_name, bio, experience } = req.body;
+  console.log("line 27", user_name, bio, experience)
 
-// async function create(req, res) {
-//     const { user_name } = req.body
-//     try {
-//       // Check if the user_name is provided
-//       if (!user_name) {
-//         return res.status(400).json({ message: 'User_name is required.' });
-//       }
-  
-//       // Check if the user_name exists in the accounts table
-//       const accountResult = await db.query('SELECT * FROM accounts WHERE user_name = $1', [user_name]);
-//       console.log(accountResult)
-//       const account = accountResult.rows[0];
-//       console.log(account)
-  
-//       if (!account) {
-//         return res.status(404).json({ message: 'User not found' });
-//       }
-  
-//       const newCustomer = await Customer.create(account.account_id);
-  
-//       res.status(201).json(newCustomer);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: 'Error creating customer' });
-//     }
-// }
+  try {
+    const account = await Account.findByUserName(user_name);
+    if (!account) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    data = {
+      account_id: account.account_id,
+      bio: bio,
+      experience: experience,
+    };
+    
+    console.log("line 36", data)
+    
+    const newFixer = await Fixer.create(data);
+
+    res.status(201).json(newFixer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error creating fixer' });
+  }
+}
   
 async function update(req, res) {
     const fixerId = req.params.id
@@ -89,6 +79,7 @@ async function destroy(req, res) {
 module.exports = {
   index,
   show,
+  create,
   update,
   destroy
 }

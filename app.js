@@ -16,58 +16,9 @@ app.get('/', (req, res) => {
     })
 })
 
-app.use('/cafe', cafeRoutes)
-
-// // CUSTOMERS
-
-// // Create new customer
-// app.post('/customer', async (req, res) => {
-//   const { user_name } = req.body
-//   try {
-//     const accountResult = await db.query('SELECT * FROM accounts WHERE user_name = $1', [user_name]) 
-//     const account = accountResult.rows[0]
-//     if(!account) {
-//       return res.status(404).json({message: 'User not found'})
-//     }
-//     const query = `
-//       INSERT INTO customers (account_id)
-//       VALUES ($1)
-//       RETURNING *  
-//     `
-//     const values = [account.account_id]
-//     const { rows } = await db.query(query, values)
-//     res.status(201).json(rows[0])
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json({message: 'Error creating customer'})
-//   }
-// })
+app.use('/', cafeRoutes)
 
 // //FIXERS
-
-// // Create fixer profile
-// app.post('/fixer', async (req, res) => {
-//   const { user_name, bio, experience } = req.body;
-//   try {
-//     const accountResult = await db.query('SELECT * FROM accounts WHERE user_name = $1', [user_name]);
-//     const account = accountResult.rows[0];
-//     if (!account) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-//     const query = `
-//       INSERT INTO fixers (account_id, bio, experience) 
-//       VALUES ($1, $2, $3)
-//       RETURNING *
-//     `;
-//     const values = [account.account_id, bio, experience];
-//     const { rows } = await db.query(query, values);
-//     const insertedFixer = rows[0];
-//     res.status(201).json(insertedFixer);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Error creating fixer' });
-//   }
-// });
 
 // // Edit fixer profile
 // app.patch('/fixer/:id', async (req, res) => {
@@ -89,23 +40,6 @@ app.use('/cafe', cafeRoutes)
 //   } catch (error) {
 //     console.error(error)
 //     res.status(500).json({message: 'Error updating fixer profile'})
-//   }
-// })
-  
-// // Delete fixer profile
-// app.delete('/fixer/:id', async (req, res) => {
-//   try {
-//     const fixerId = req.params.id;
-//     const query = `DELETE FROM fixers WHERE fixer_id = $1`;
-//     await db.query(query, [fixerId]);
-//     const result = await db.query('SELECT * FROM fixers WHERE fixer_id = $1', [fixerId]);
-//     if(!result.rowCount) {
-//       return res.status(404).json({message: 'Fixer not found'});
-//     }
-//     res.sendStatus(204);
-//   } catch (error) {
-//      console.error(error);
-//      res.status(500).json({message: 'Error deleting fixer profile'}); 
 //   }
 // })
 
