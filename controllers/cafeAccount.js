@@ -42,7 +42,7 @@ async function register(req, res) {
     const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS))
 
     // encrypt password
-    data.password = await bcrypt.hash(data.password, salt)
+    data.user_password = await bcrypt.hash(data.user_password, salt)
 
     // save username & encrypted password
     const result = await Account.create(data)
