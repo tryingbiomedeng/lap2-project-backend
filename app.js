@@ -226,28 +226,7 @@ app.delete('/fixer/:id', async (req, res) => {
 // Item routes
 app.use('/items', require('./routers/items'));
 
-// Edit items
-app.patch('/item/:id', async (req, res) => {
-  try {
-    const itemId = req.params.id
-    const updates = req.body
-    const query = `
-      UPDATE items 
-      SET item_name = $1, item_description = $2, price = $3
-      WHERE item_id = $4
-      RETURNING *
-    `
-    const values = [updates.item_name, updates.item_description, updates.price, itemId]
-    const { rows } = await db.query(query, values)
-    if(!rows[0]) {
-      return res.status(404).json({message: 'Fixer not found'})
-    }
-    res.json(rows[0])
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({message: 'Error updating fixer profile'})
-  }
-})
+
 
 // Delete item
 app.delete('/item/:id', async (req, res) => {

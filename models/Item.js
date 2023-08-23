@@ -65,6 +65,14 @@ class Item {
 
     return new Item(response.rows[0]);
   }
+
+  async destroy() {
+    const response = await db.query("DELETE FROM items WHERE item_id = $1 RETURNING *", [this.itemId]);
+    if (response.rows.length != 1) {
+      throw new Error("Unable to delete item.");
+    }
+    return new Item(response.rows[0]);
+  }
 }
 
 module.exports = Item;
