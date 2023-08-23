@@ -24,20 +24,6 @@ class Customer {
         return new Customer(response.rows[0])
     }
 
-//     static async create(data) {
-//       const { email, user_name, user_password } = data;   
-//       if (!user_name, !email, !user_password){
-//           throw new Error("Invalid user data.");
-//       }
-      
-//       const response = await db.query(`
-//              INSERT INTO accounts (email, user_name, user_password) 
-//              VALUES ($1, $2, $3)
-//              RETURNING *
-//            `, [email, user_name, user_password])
-//       return new Account(response.rows[0])
-//   }
-
     static async create(account_id) {
         try {
         const query = `
@@ -56,8 +42,8 @@ class Customer {
 
     async destroy() {
         await db.query('DELETE FROM jobs WHERE customer_id = $1', [this.customer_id])
-        const response = await db.query(`DELETE FROM customers WHERE customer_id = $1`, [this.customer_id])
-        return new Customer(response.rows[0])
+        await db.query(`DELETE FROM customers WHERE customer_id = $1`, [this.customer_id])
+        return 'Customer deleted'
     }
 }
 

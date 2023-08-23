@@ -54,7 +54,6 @@ class Fixer {
 
             const values = [updates.bio, updates.experience, fixerId]
             const { rows } = await db.query(query, values)
-e
             if (!rows[0]) {
                 throw new Error('Fixer not found')
             }
@@ -62,13 +61,13 @@ e
             const { fixer_id, bio, experience } = rows[0]
             return new Fixer({ fixer_id, bio, experience })
         } catch (error) {
-            throw new Error('Error updating fixer profile')
+            throw error
         }
     }
   
     async destroy() {
-        const response = await db.query(`DELETE FROM fixers WHERE fixer_id = $1`, [this.fixer_id])
-        return new Fixer(response.rows[0])
+        await db.query(`DELETE FROM fixers WHERE fixer_id = $1`, [this.fixer_id])
+        return 'Fixer deleted'
     }
 }
 
