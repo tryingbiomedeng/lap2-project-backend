@@ -19,6 +19,14 @@ class Job {
       throw new Error('No jobs exist');
     }
   }
+
+  static async showById(id) {
+    const response = await db.query('SELECT * FROM jobs WHERE job_id = $1', [id]);
+    if (response.rows.length != 1) {
+      throw new Error('Job not found.');
+    }
+    return new Job(response.rows[0])
+  }
 }
 
 module.exports = Job;
