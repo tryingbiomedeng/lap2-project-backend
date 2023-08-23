@@ -10,6 +10,15 @@ class Job {
     this.available = data.available;
     this.completed = data.completed;
   }
+
+  static async index(req, res) {
+    try {
+      const jobs = await db.query('SELECT * FROM jobs');
+      return jobs.rows.map(j => new Job(j));
+    } catch (error) {
+      throw new Error('No jobs exist');
+    }
+  }
 }
 
 module.exports = Job;
