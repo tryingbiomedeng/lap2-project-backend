@@ -4,7 +4,6 @@ const index = async (req, res) => {
   try {
     const jobs = await Job.index();
     res.status(200).send({data: jobs});
-    console.log(jobs);
   } catch (error) {
     res.status(500).send({error: error.message})
   }
@@ -20,7 +19,18 @@ const showById = async (req, res) => {
   }
 }
 
+const create = async (req, res) => {
+  try {
+    const data = req.body;
+    const job = await Job.create(data);
+    res.status(201).send({data: job});
+  } catch (error) {
+    res.status(400).send({error: error.message})
+  }
+}
+
 module.exports = {
   index,
-  showById
+  showById,
+  create
 }

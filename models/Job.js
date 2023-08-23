@@ -27,6 +27,23 @@ class Job {
     }
     return new Job(response.rows[0])
   }
+
+  static async create(data) {
+    try {
+      console.log(data.customer_id, data.job_name, data.job_description);
+      const response = await db.query("INSERT INTO jobs (customer_id, job_name, job_description) VALUES ($1, $2, $3) RETURNING *",
+      [data.customer_id, data.job_name, data.job_description]);
+      const job = new Job(response.rows[0]);
+      console.log(job);
+
+      await db.query('UPDATE customers SET active_requests = active_requests + 1 WHERE customer_id = $1', [data.customer_id]);
+
+      return job;
+
+    } catch (error) {
+      throw new Error({message: 'Error creating job.'});
+    }
+  }
 }
 
 module.exports = Job;
