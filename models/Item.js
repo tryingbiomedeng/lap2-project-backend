@@ -71,6 +71,7 @@ class Item {
     if (response.rows.length != 1) {
       throw new Error("Unable to delete item.");
     }
+    await db.query('UPDATE customers SET items_for_sale = items_for_sale + 1 WHERE customer_id = $1', [this.sellerId])
     return new Item(response.rows[0]);
   }
 }
