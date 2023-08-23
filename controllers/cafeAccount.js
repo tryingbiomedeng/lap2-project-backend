@@ -52,9 +52,29 @@ async function register(req, res) {
   }
 }
 
+async function login(req, res) {
+  const data = req.body;
+
+  try {
+    const user = await Account.findByUserName(data.user_name)
+
+    const authenticated = await bcrypt.compare(data.user_password, user.user_password)
+
+    if (!authenticated) {
+      throw new Error("Incorrect credentials.")
+    } else {
+      const token = await Token.create(user.account_id)
+      res.status(200).json({authenticated: true, token: token.token})
+    }
+  } catch (error) {
+    res.status(401).json({error: error.message})
+  }
+}
+
 module.exports = {
   index,
   show,
   create,
-  register
+  register,
+  login
 }

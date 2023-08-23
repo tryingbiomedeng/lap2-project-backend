@@ -7,5 +7,6 @@ accountRouter.get('/', accountController.index)
 accountRouter.get('/:id', accountController.show)
 accountRouter.post('/', accountController.create)
 accountRouter.post('/register', accountController.register)
+accountRouter.post('/login', accountController.login)
 
 module.exports = accountRouter
