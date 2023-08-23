@@ -20,9 +20,9 @@ app.get('/', (req, res) => {
     })
 })
 
-app.use('/account', accountRoutes)
-app.use('/customer', customerRoutes)
-app.use('/fixer', fixerRoutes)
+app.use('/accounts', accountRoutes)
+app.use('/customers', customerRoutes)
+app.use('/fixers', fixerRoutes)
 app.use('/items', itemRoutes)
 app.use('/jobs', jobRoutes)
 
