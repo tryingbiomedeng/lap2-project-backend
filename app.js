@@ -226,26 +226,8 @@ app.delete('/fixer/:id', async (req, res) => {
 // Item routes
 app.use('/items', require('./routers/items'));
 
-
-
-// Delete item
-app.delete('/item/:id', async (req, res) => {
-  try {
-    const itemId = req.params.id;
-    const query = `DELETE FROM items WHERE item_id = $1`;
-    await db.query(query, [itemId]);
-    const result = await db.query('SELECT * FROM items WHERE item_id = $1', [itemId]);
-    if(!result.rowCount) {
-      return res.status(404).json({message: 'Item not found'});
-    }
-    res.sendStatus(204);
-  } catch (error) {
-     console.error(error);
-     res.status(500).json({message: 'Error deleting item'}); 
-  }
-})
-
 // JOB ADVERTS
+app.use('/jobs', require('./routers/jobs'));
 
 // Get all items
 app.get('/job', async (req, res) => {
