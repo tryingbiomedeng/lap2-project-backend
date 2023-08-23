@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  testing_api:
+    image: node:18
+    container_name: app_test
+    environment:
+      - PORT=3000
+    volumes:
+      - type: bind
+        source: ./server
+        target: /code
+    working_dir: /code
+    command: bash -c "npm install && npm run test"
