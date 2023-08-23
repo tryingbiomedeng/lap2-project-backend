@@ -54,6 +54,15 @@ class Job {
 
     return new Job(response.rows[0]);
   }
+
+  async destroy() {
+    const response = await db.query("DELETE FROM jobs WHERE job_id = $1 RETURNING *", [this.job_id]);
+    if (response.rows.length != 1) {
+      throw new Error("Unable to delete job.");
+    }
+    await db.query('UPDATE customers SET active_requests = active_requests + 1 WHERE customer_id = $1', [this.customer_id])
+    return new Job(response.rows[0]);
+  }
 }
 
 module.exports = Job;

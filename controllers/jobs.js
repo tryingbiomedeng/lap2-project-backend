@@ -41,9 +41,21 @@ async function update (req, res) {
   }
 }
 
+async function destroy(req, res) {
+  try {
+    const id = parseInt(req.params.id);
+    const job = await Job.showById(id);
+    const result = await job.destroy();
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).send({error: error.message});
+  }
+}
+
 module.exports = {
   index,
   showById,
   create,
-  update
+  update,
+  destroy
 }
