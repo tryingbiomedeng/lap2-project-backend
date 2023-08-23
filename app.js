@@ -226,31 +226,6 @@ app.delete('/fixer/:id', async (req, res) => {
 // Get all items
 app.use('/items', require('./routers/items'));
 
-// Create new item
-app.post('/item', async (req, res) => {
-  const { user_name, item_name, item_description, price } = req.body
-  try {
-    const customerResult = await db.query('SELECT * FROM customers JOIN accounts ON customers.account_id = accounts.account_id WHERE accounts.user_name = $1', [user_name])
-    const customer = customerResult.rows[0]
-    if(!customer) {
-      return res.status(404).json({message: 'Customer not found'})
-    }
-    const query = `
-      INSERT INTO items (seller_id, item_name, item_description, price)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
-    `
-    const values = [customer.customer_id, item_name, item_description, price]
-    const { rows } = await db.query(query, values)
-    const item = rows[0]
-    await db.query('UPDATE customers SET items_for_sale = items_for_sale + 1 WHERE customer_id = $1', [customer.customer_id])
-    res.status(201).json(item)
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({message: 'Error creating item'})
-  }
-})
-
 // Get single item
 app.get('/item/:id', async (req, res) => {
   try {
