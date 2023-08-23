@@ -47,7 +47,7 @@ async function register(req, res) {
     // save username & encrypted password
     const result = await Account.create(data)
     res.status(201).send(result)
-  } catch {
+  } catch (error) {
     res.status(400).json({error: error.message})
   }
 }
