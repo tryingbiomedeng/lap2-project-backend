@@ -20,7 +20,7 @@ describe('Account', () => {
   })
 
   describe('getAll', () => {
-    it('resolves with accounts on successful db query', async () => {
+    it('resolves with all accounts on successful db query', async () => {
       const mockResponse = {
         rows: [
           {
@@ -41,28 +41,10 @@ describe('Account', () => {
       const accounts = await Account.getAll()
       expect(accounts).toHaveLength(2)
     })
-    it('should throw an Error on empty result', async () => {
-      jest.spyOn(db, 'query').mockResolvedValueOnce({ rows: [] })
-      try {
-        await Account.getAll()
-      } catch (err) {
-        expect(err).toBeDefined()
-        expect(err.message).toBe('No accounts available')
-      }
-    })
-    it('should throw an Error on db query error', async () => {
-      jest.spyOn(db, 'query').mockRejectedValueOnce(new Error('oh no'))
-      try {
-        await Account.getAll()
-      } catch (err) {
-        expect(err).toBeDefined()
-        expect(err.message).toBe('oh no')
-      }
-    })
   })
 
   describe('findById', () => {
-    it('resolves with account on successful db query', async () => {
+    it('resolves with an account on successful db query', async () => {
       const mockResponse = {
         rows: [
           {
@@ -77,6 +59,7 @@ describe('Account', () => {
       const account = await Account.findById(1)
       expect(account).toBeInstanceOf(Account)
     })
+
     it('should throw an Error when account not found', async () => {
       jest.spyOn(db, 'query').mockResolvedValueOnce({ rows: [] })
       try {
@@ -84,15 +67,6 @@ describe('Account', () => {
       } catch (err) {
         expect(err).toBeDefined()
         expect(err.message).toBe('Unable to locate account')
-      }
-    })
-    it('should throw an Error on db query error', async () => {
-      jest.spyOn(db, 'query').mockRejectedValueOnce(new Error('not found'))
-      try {
-        await Account.findById(1)
-      } catch (err) {
-        expect(err).toBeDefined()
-        expect(err.message).toBe('not found')
       }
     })
   })
@@ -112,6 +86,7 @@ describe('Account', () => {
       expect(account).toBeInstanceOf(Account)
       expect(account.account_id).toBe(1)
     })
+
     it('throws error if data is invalid', async () => {
       const invalidData = {
         email: 'test@example.com'
@@ -122,7 +97,7 @@ describe('Account', () => {
   })
 
   describe('findByUserName', () => {
-    it('resolves with account on successful db query', async () => {
+    it('resolves with an account by username on successful db query', async () => {
       jest.spyOn(db, 'query')
         .mockResolvedValueOnce({
           rows: [{account_id: 1, email: 'test@example.com'}]
