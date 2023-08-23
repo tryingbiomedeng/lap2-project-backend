@@ -29,8 +29,21 @@ const create = async (req, res) => {
   }
 }
 
+async function update (req, res) {
+  try {
+    const id = parseInt(req.params.id);
+    const data = req.body;
+    const job = await Job.showById(id);
+    const result = await job.update(data);
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(400).send({error: error.message})
+  }
+}
+
 module.exports = {
   index,
   showById,
-  create
+  create,
+  update
 }

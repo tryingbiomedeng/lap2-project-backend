@@ -44,6 +44,16 @@ class Job {
       throw new Error({message: 'Error creating job.'});
     }
   }
+
+  async update(data) {
+    const response = await db.query("UPDATE jobs SET job_name = $1, job_description = $2, available = $3, completed = $4 WHERE job_id = $5 RETURNING *", [data.job_name, data.job_description, data.available, data.completed, this.job_id]);
+
+    if (response.rows.length != 1) {
+      throw new Error("Unable to update job.");
+    }
+
+    return new Job(response.rows[0]);
+  }
 }
 
 module.exports = Job;
