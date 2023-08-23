@@ -59,6 +59,16 @@ CREATE TABLE jobs (
     REFERENCES customers(customer_id)
 );
 
+CREATE TABLE token (
+  token_id INT GENERATED ALWAYS AS IDENTITY,
+  account_id INT NOT NULL,
+  token CHAR(36) UNIQUE NOT NULL,
+  PRIMARY KEY (token_id),
+  CONSTRAINT fk_account
+    FOREIGN KEY (account_id)
+    REFERENCES accounts(account_id)
+);
+
 INSERT INTO accounts
   (email, user_name, user_password)
 VALUES
