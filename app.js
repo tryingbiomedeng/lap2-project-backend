@@ -1,7 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const logger = require('morgan')
-const cafeRoutes = require('./routers/cafeRouter')
+const accountRoutes = require('./routers/accountRouter')
+const customerRoutes = require('./routers/customerRouter')
+const fixerRoutes = require('./routers/fixerRouter')
 
 const app = express()
 
@@ -16,32 +18,9 @@ app.get('/', (req, res) => {
     })
 })
 
-app.use('/', cafeRoutes)
-
-// //FIXERS
-
-// // Edit fixer profile
-// app.patch('/fixer/:id', async (req, res) => {
-//   try {
-//     const fixerId = req.params.id
-//     const updates = req.body
-//     const query = `
-//       UPDATE fixers 
-//       SET bio = $1, experience = $2  
-//       WHERE fixer_id = $3
-//       RETURNING *
-//     `
-//     const values = [updates.bio, updates.experience, fixerId]
-//     const { rows } = await db.query(query, values)
-//     if(!rows[0]) {
-//       return res.status(404).json({message: 'Fixer not found'})
-//     }
-//     res.json(rows[0])
-//   } catch (error) {
-//     console.error(error)
-//     res.status(500).json({message: 'Error updating fixer profile'})
-//   }
-// })
+app.use('/account', accountRoutes)
+app.use('/customer', customerRoutes)
+app.use('/fixer', fixerRoutes)
 
 // //ITEMS
 
