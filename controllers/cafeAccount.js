@@ -1,4 +1,7 @@
+const bcrypt = require('bcrypt')
+
 const Account = require('../models/cafeAccount')
+const Token = require('../models/Token')
 
 // model/DB -> controller -> router -> app -> localhost:3000/countries
 
@@ -32,8 +35,26 @@ async function create(req, res) {
   }
 }
 
+async function register(req, res) {
+  try {
+    const data = req.body;
+
+    const salt = await bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS))
+
+    // encrypt password
+    data.password = await bcrypt.hash(data.password, salt)
+
+    // save username & encrypted password
+    const result = await UserActivation.create(data)
+    res.status(201).send(result)
+  } catch {
+    res.status(400).json({error: error.message})
+  }
+}
+
 module.exports = {
   index,
   show,
-  create
+  create,
+  register
 }
