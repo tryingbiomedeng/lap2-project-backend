@@ -23,9 +23,20 @@ const showById = async (req, res) => {
 const create = async (req, res) => {
   try {
     const data = req.body;
-    console.log(data);
     const item = await Item.create(data);
     res.status(201).send({data: item});
+  } catch (error) {
+    res.status(400).send({error: error.message})
+  }
+}
+
+async function update (req, res) {
+  try {
+    const id = parseInt(req.params.id);
+    const data = req.body;
+    const item = await Item.showById(id);
+    const result = await item.update(data);
+    res.status(200).send(result);
   } catch (error) {
     res.status(400).send({error: error.message})
   }
@@ -34,5 +45,6 @@ const create = async (req, res) => {
 module.exports = {
   index,
   showById,
-  create
+  create,
+  update
 }

@@ -226,20 +226,6 @@ app.delete('/fixer/:id', async (req, res) => {
 // Item routes
 app.use('/items', require('./routers/items'));
 
-// Get single item
-app.get('/item/:id', async (req, res) => {
-  try {
-    const { rows } = await db.query('SELECT * FROM items WHERE item_id = $1', [req.params.id]) 
-    if (!rows[0]) {
-      return res.status(404).json({ message: 'Item not found' })
-    }
-    res.json(rows[0])
-  } catch (error) {
-     console.error(error)
-     res.status(500).json({ message: 'Error retrieving item' }) 
-  }
-})
-
 // Edit items
 app.patch('/item/:id', async (req, res) => {
   try {

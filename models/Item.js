@@ -55,6 +55,16 @@ class Item {
       throw new Error({message: 'Error creating item'});
     }
   }
+
+  async update(data) {
+    const response = await db.query("UPDATE items SET item_name = $1, item_description = $2, price = $3, available = $4 WHERE item_id = $5 RETURNING *", [data.itemName, data.itemDescription, data.price, data.available, this.itemId]);
+
+    if (response.rows.length != 1) {
+      throw new Error("Unable to update item.");
+    }
+
+    return new Item(response.rows[0]);
+  }
 }
 
 module.exports = Item;
