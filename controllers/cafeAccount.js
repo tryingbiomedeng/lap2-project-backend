@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 
 const Account = require('../models/cafeAccount')
+const Customer = require('../models/cafeCustomer')
 const Token = require('../models/Token')
 
 // model/DB -> controller -> router -> app -> localhost:3000/countries
@@ -42,9 +43,13 @@ async function register(req, res) {
 
     // encrypt password
     data.user_password = await bcrypt.hash(data.user_password, salt)
+    console.log(data);
 
     // save username & encrypted password
     const result = await Account.create(data)
+    // create customer
+    console.log(result.account_id);
+    await Customer.create(result.account_id)
     res.status(201).send(result)
   } catch (error) {
     res.status(400).json({error: error.message})
