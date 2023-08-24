@@ -1,1 +1,1 @@
-## Recyle cafe app
+## Recycle cafe app
