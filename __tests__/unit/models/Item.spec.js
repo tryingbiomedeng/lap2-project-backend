@@ -19,10 +19,10 @@ describe('Item', () => {
       const data = { item_id: 1, seller_id: 2, item_name: "Headphones", item_description: "Cool wired headphones", price: 10.0, available: true }
       const item = new Item(data);
 
-      expect(item.itemId).toBe(1);
-      expect(item.sellerId).toBe(2);
-      expect(item.itemName).toBe('Headphones');
-      expect(item.itemDescription).toBe('Cool wired headphones');
+      expect(item.item_id).toBe(1);
+      expect(item.seller_id).toBe(2);
+      expect(item.item_name).toBe('Headphones');
+      expect(item.item_description).toBe('Cool wired headphones');
       expect(item.price).toBe(10.0);
       expect(item.available).toBe(true);
     })
@@ -60,8 +60,8 @@ describe('Item', () => {
 
       const result = await Item.showById(1)
       expect(result).toBeInstanceOf(Item)
-      expect(result.itemId).toBe(1)
-      expect(result.sellerId).toBe(2)
+      expect(result.item_id).toBe(1)
+      expect(result.seller_id).toBe(2)
     })
 
     it('should throw an error on db query error', async () => {
@@ -73,6 +73,22 @@ describe('Item', () => {
         expect(error).toBeTruthy()
         expect(error.message).toBe('Item not found.')
       }
+    })
+  })
+
+  describe('create', () => {
+    it('resolves with an an item on successful db query', async () => {
+      let itemData = { seller_id: 2, item_name: 'Plate', item_description: 'Plastic plate', price: 5.0}
+      jest.spyOn(db, 'query')
+        .mockResolvedValueOnce({rows: [{...itemData, item_id: 1, available: true}]})
+
+      const result = await Item.create(itemData)
+      expect(result).toHaveProperty('item_id')
+      expect(result).toHaveProperty('seller_id')
+      expect(result).toHaveProperty('item_name')
+      expect(result).toHaveProperty('item_description')
+      expect(result).toHaveProperty('price')
+      expect(result).toHaveProperty('available')
     })
   })
 })
