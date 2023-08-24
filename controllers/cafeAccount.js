@@ -27,7 +27,6 @@ async function show(req, res) {
 async function create(req, res) {
   try {
     const data = req.body
-    console.log(data)
     const newAccount = await Account.create(data)
     res.status(201).json(newAccount)
   } catch (err) {
