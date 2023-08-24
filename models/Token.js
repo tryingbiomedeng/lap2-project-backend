@@ -10,18 +10,17 @@ class Token {
   }
 
   static async create(account_id) {
-    const token = uuidv4;
+    const token = uuidv4();
     const response = await db.query(
-      "INSERT INTO token (account_id, token) VALUES ($1, $2) RETURNING token_id;", 
+      "INSERT INTO tokens (account_id, token) VALUES ($1, $2) RETURNING token_id;", 
       [account_id, token]);
-
     const newTokenId = response.rows[0].token_id;
     const newToken = await Token.showById(newTokenId);
     return newToken;
   }
 
   static async showById(id) {
-    const response = await db.query("SELECT * FROM token WHERE token_id = $1", [id]);
+    const response = await db.query("SELECT * FROM tokens WHERE token_id = $1", [id]);
     if (response.rows.length != 1) {
       throw new Error("Unable to locate token.");
     } else {
@@ -30,7 +29,7 @@ class Token {
   }
 
   static async showByToken(token) {
-    const response = await db.query("SELECT * FROM token WHERE token = $1", [token]);
+    const response = await db.query("SELECT * FROM tokens WHERE token = $1", [token]);
 
     if (response.rows.length != 1) {
       throw new Error("Unable to locate token.");
@@ -40,7 +39,7 @@ class Token {
   }
 
   async destroy() {
-    const response = await db.query("DELETE FROM token WHERE token_id = $1 RETURNING token", [this.token_id]);
+    const response = await db.query("DELETE FROM tokens WHERE token_id = $1 RETURNING token", [this.token_id]);
     if(response.rows.length != 1) {
       throw new Error("Unable to delete token.")
     } else {

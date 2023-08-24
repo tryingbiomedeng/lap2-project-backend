@@ -62,7 +62,7 @@ CREATE TABLE jobs (
 CREATE TABLE tokens (
   token_id INT GENERATED ALWAYS AS IDENTITY,
   account_id INT NOT NULL,
-  token CHAR(36) UNIQUE NOT NULL,
+  token CHAR(50) UNIQUE NOT NULL,
   PRIMARY KEY (token_id),
   CONSTRAINT fk_account1
     FOREIGN KEY (account_id)

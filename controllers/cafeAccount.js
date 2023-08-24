@@ -27,7 +27,6 @@ async function show(req, res) {
 async function create(req, res) {
   try {
     const data = req.body
-    console.log(data)
     const newAccount = await Account.create(data)
     res.status(201).json(newAccount)
   } catch (err) {
@@ -74,7 +73,7 @@ async function login(req, res) {
 async function logout(req,res) {
   try {
     const validToken = await Token.showByToken(req.headers["authorization"])
-    const user = Account.show(validToken.account_id)
+    const user = Account.findById(validToken.account_id) // needed?
     await validToken.destroy()
     res.send({authenticated: false})
   } catch (error) {
