@@ -63,7 +63,9 @@ async function login(req, res) {
       throw new Error("Incorrect credentials.")
     } else {
       const token = await Token.create(user.account_id)
-      res.status(200).json({authenticated: true, token: token.token})
+      const customer_id = await Account.findCustomerId(user.account_id)
+      const id = customer_id.customer_id
+      res.status(200).json({authenticated: true, token: token.token, id: id})
     }
   } catch (error) {
     res.status(401).json({error: error.message})
