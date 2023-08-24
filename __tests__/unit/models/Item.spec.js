@@ -63,5 +63,16 @@ describe('Item', () => {
       expect(result.itemId).toBe(1)
       expect(result.sellerId).toBe(2)
     })
+
+    it('should throw an error on db query error', async () => {
+      jest.spyOn(db, 'query').mockRejectedValue()
+
+      try {
+        await Item.showById(10)
+      } catch (error) {
+        expect(error).toBeTruthy()
+        expect(error.message).toBe('Item not found.')
+      }
+    })
   })
 })

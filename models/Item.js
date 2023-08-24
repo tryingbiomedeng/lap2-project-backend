@@ -20,11 +20,13 @@ class Item {
   }
 
   static async showById(id) {
-    const response = await db.query('SELECT * FROM items WHERE item_id = $1', [id]);
-    if (response.rows.length != 1) {
+    try {
+      const response = await db.query('SELECT * FROM items WHERE item_id = $1', [id]);
+      return new Item(response.rows[0])
+    } catch (error) {
       throw new Error('Item not found.');
     }
-    return new Item(response.rows[0])
+
   }
 
   static async create(data) {
