@@ -26,6 +26,7 @@ class Customer {
 
     static async create(account_id) {
         try {
+            console.log(account_id);
         const query = `
             INSERT INTO customers (account_id)
             VALUES ($1)

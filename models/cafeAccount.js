@@ -24,6 +24,14 @@ class Account {
         return new Account(response.rows[0])
     }
 
+    static async findCustomerId(accountId) {
+      const response = await db.query('SELECT customer_id FROM customers JOIN accounts ON customers.account_id = accounts.account_id WHERE accounts.account_id = $1;', [accountId])
+      if (response.rows.length != 1) {
+        throw new Error('Unable to locate account')
+      }
+      return response.rows[0]
+    }
+
     static async create(data) {
       const { email, user_name, user_password } = data   
       if (!email, !user_name, !user_password){

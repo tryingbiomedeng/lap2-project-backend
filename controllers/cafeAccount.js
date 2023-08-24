@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 
 const Account = require('../models/cafeAccount')
+const Customer = require('../models/cafeCustomer')
 const Token = require('../models/Token')
 
 // model/DB -> controller -> router -> app -> localhost:3000/countries
@@ -42,9 +43,13 @@ async function register(req, res) {
 
     // encrypt password
     data.user_password = await bcrypt.hash(data.user_password, salt)
+    console.log(data);
 
     // save username & encrypted password
     const result = await Account.create(data)
+    // create customer
+    console.log(result.account_id);
+    await Customer.create(result.account_id)
     res.status(201).send(result)
   } catch (error) {
     res.status(400).json({error: error.message})
@@ -63,7 +68,9 @@ async function login(req, res) {
       throw new Error("Incorrect credentials.")
     } else {
       const token = await Token.create(user.account_id)
-      res.status(200).json({authenticated: true, token: token.token})
+      const customer_id = await Account.findCustomerId(user.account_id)
+      const id = customer_id.customer_id
+      res.status(200).json({authenticated: true, token: token.token, id: id})
     }
   } catch (error) {
     res.status(401).json({error: error.message})
