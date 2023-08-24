@@ -5,7 +5,7 @@ const authenticator = require('../middleware/authenticator')
 
 const router = Router();
 
-router.get('/', authenticator, jobsController.index);
+router.get('/', jobsController.index);
 router.get('/:id', jobsController.showById);
 router.post('/', jobsController.create);
 router.patch('/:id', jobsController.update);
