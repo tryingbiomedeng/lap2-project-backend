@@ -21,11 +21,12 @@ class Job {
   }
 
   static async showById(id) {
-    const response = await db.query('SELECT * FROM jobs WHERE job_id = $1', [id]);
-    if (response.rows.length != 1) {
+    try {
+      const response = await db.query('SELECT * FROM jobs WHERE job_id = $1', [id]);
+      return new Job(response.rows[0])
+    } catch (error) {
       throw new Error('Job not found.');
     }
-    return new Job(response.rows[0])
   }
 
   static async create(data) {
@@ -36,12 +37,12 @@ class Job {
       const job = new Job(response.rows[0]);
       console.log(job);
 
-      await db.query('UPDATE customers SET active_requests = active_requests + 1 WHERE customer_id = $1', [data.customer_id]);
+      // await db.query('UPDATE customers SET active_requests = active_requests + 1 WHERE customer_id = $1', [data.customer_id]);
 
       return job;
 
     } catch (error) {
-      throw new Error({message: 'Error creating job.'});
+      throw new Error('Error creating job.');
     }
   }
 

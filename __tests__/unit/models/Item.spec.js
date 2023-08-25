@@ -90,5 +90,16 @@ describe('Item', () => {
       expect(result).toHaveProperty('price')
       expect(result).toHaveProperty('available')
     })
+
+    it('should throw an error on db query error', async () => {
+      jest.spyOn(db, 'query').mockRejectedValue(new Error())
+
+      try {
+        await Item.create({})
+      } catch (error) {
+        expect(error).toBeTruthy()
+        expect(error.message).toBe('Error creating item')
+      }
+    })
   })
 })
