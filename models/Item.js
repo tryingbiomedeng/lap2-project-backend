@@ -31,19 +31,19 @@ class Item {
 
   static async create(data) {
     try {
+
       console.log(data.seller_id, data.item_name, data.item_description, data.price);
       const response = await db.query("INSERT INTO items (seller_id, item_name, item_description, price) VALUES ($1, $2, $3, $4) RETURNING *",
       [data.seller_id, data.item_name, data.item_description, data.price]);
       const item = new Item(response.rows[0]);
-      console.log("line 38");
-      console.log(item);
+
 
       // await db.query('UPDATE customers SET items_for_sale = items_for_sale + 1 WHERE customer_id = $1', [data.seller_id])
 
       return item;
 
     } catch (error) {
-      throw new Error({message: 'Error creating item'});
+      throw new Error('Error creating item');
     }
   }
 
